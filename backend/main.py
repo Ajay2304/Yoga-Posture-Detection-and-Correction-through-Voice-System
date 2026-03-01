@@ -1,5 +1,8 @@
+import os
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 import json
 import asyncio
 from logic.engine import evaluate_pose, PosePayload, Landmark
@@ -14,7 +17,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.get("/")
+# API Routes
+@app.get("/api")
 def read_root():
     return {"message": "Welcome to the Yoga API"}
 
@@ -46,3 +50,15 @@ async def websocket_pose_endpoint(websocket: WebSocket):
         print("Client disconnected.")
     except Exception as e:
         print(f"Error processing websocket: {str(e)}")
+
+# Serve frontend for production
+frontend_dist = os.path.join(os.path.dirname(__file__), "..", "frontend", "dist")
+if os.path.isdir(frontend_dist):
+    app.mount("/assets", StaticFiles(directory=os.path.join(frontend_dist, "assets")), name="assets")
+
+    @app.get("/{full_path:path}")
+    async def serve_static(full_path: str):
+        file_path = os.path.join(frontend_dist, full_path)
+        if os.path.isfile(file_path):
+            return FileResponse(file_path)
+        return FileResponse(os.path.join(frontend_dist, "index.html"))

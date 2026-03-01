@@ -3,7 +3,9 @@ import useWebSocket from 'react-use-websocket';
 import { FilesetResolver, PoseLandmarker, DrawingUtils } from '@mediapipe/tasks-vision';
 import { Volume2, VolumeX, Activity, Award, Play, ArrowLeft, Heart, Zap, Shield, CheckCircle2 } from 'lucide-react';
 
-const WS_URL = 'ws://localhost:8000/ws/pose';
+const WS_URL = import.meta.env.PROD 
+  ? `${window.location.protocol === 'https:' ? 'wss' : 'ws'}://${window.location.host}/ws/pose` 
+  : 'ws://localhost:8000/ws/pose';
 
 import mountainImg from './assets/poses/mountain.png';
 import treeImg from './assets/poses/tree.png';
