@@ -1,0 +1,20 @@
+# Environments
+venv/
+.env
+__pycache__/
+*.pyc
+*.pyo
+
+# Node
+node_modules/
+dist/
+build/
+.npm/
+
+# IDE
+.vscode/
+.idea/
+.DS_Store
+
+# Misc
+*.log
